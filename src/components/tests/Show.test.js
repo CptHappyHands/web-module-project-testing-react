@@ -41,7 +41,7 @@ test("renders same number of options seasons are passed in", () => {
   //   const button = screen.getByRole("button");
   //   const select = screen.getByRole("select");
   const testSeasons = screen.queryAllByTestId("season-option");
-  console.log(testSeasons);
+  //   console.log(testSeasons);
   //   userEvent.click(button);
   //   userEvent.click(select);
   expect(testSeasons).toHaveLength(2);
@@ -52,12 +52,20 @@ test("handleSelect is called when an season is selected", () => {
   render(
     <Show show={testShow} handleSelect={fakeFunction} selectedSeason="none" />
   );
-  const select = screen.queryByRole("select");
+  const select = screen.getByLabelText("Select A Season");
   userEvent.selectOptions(select, ["1"]);
   expect(fakeFunction.mock.calls).toHaveLength(1);
 });
 
-test("component renders when no seasons are selected and when rerenders with a season passed in", () => {});
+test("component renders when no seasons are selected and when rerenders with a season passed in", () => {
+  const { rerender } = render(<Show show={testShow} selectedSeason="none" />);
+  let testRender = screen.queryByTestId("episodes-container");
+  expect(testRender).not.toBeInTheDocument();
+
+  rerender(<Show show={testShow} selectedSeason="1" />);
+  testRender = screen.queryByTestId("episodes-container");
+  expect(testRender).toBeInTheDocument();
+});
 
 //Tasks:
 //1. Build an example data structure that contains the show data in the correct format. A show should contain a name, a summary and an array of seasons, each with a id, name and (empty) list of episodes within them. Use console.logs within the client code if you need to to verify the structure of show data.
